@@ -7,6 +7,6 @@ contract TestToken {
 
   // Constructor
   constructor() public {
-    totalSupply = 10000000;
+    totalSupply = 1000000;
   }
 }
