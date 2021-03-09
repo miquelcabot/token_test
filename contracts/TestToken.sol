@@ -24,7 +24,7 @@ contract TestToken {
   mapping(address => mapping(address => uint256)) public allowance;
 
   // Constructor
-  constructor(uint _totalSupply) public {
+  constructor(uint _totalSupply) {
     totalSupply = _totalSupply;
     balanceOf[msg.sender] = _totalSupply;
   }

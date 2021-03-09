@@ -10,9 +10,14 @@ npm install
 ```
 
 ## Usage
+Test:
 ```
 npx ganache-cli
 npx truffle test
+```
+Deploy:
+```
+npx truffle migrate --reset
 ```
 
 ## References
