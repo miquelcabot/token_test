@@ -1,4 +1,4 @@
-# token_test
+# erc20_token_test
 Test for creating an ERC20 cryptocurrency in Ethereum
 
 ## Requisites
@@ -16,4 +16,4 @@ npx truffle test
 ```
 
 ## References
-* 
+* [ERC-20 Token Standard](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md)
