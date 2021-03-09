@@ -54,10 +54,13 @@ contract TestToken {
   // Transfer From
   function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
     // Excepction if account doesn't have enough balance
-    require(balanceOf[_from] >= _value);
+    require(_value <= balanceOf[_from]);
+    require(_value <= allowance[_from][msg.sender]);
     // Transfer the balance
     balanceOf[_from] -= _value;
     balanceOf[_to] += _value;
+
+    allowance[_from][msg.sender] -= _value;
     // Transfer Event
     emit Transfer(_from, _to, _value);
     // Return a boolean

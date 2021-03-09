@@ -39,8 +39,8 @@ contract('TestToken', (accounts) => {
 
     let balance0 = await tokenInstance.balanceOf(accounts[0]);
     let balance1 = await tokenInstance.balanceOf(accounts[1]);
-    assert.equal(balance1.toNumber(), 250000, 'adds the amount to the receiving account');
     assert.equal(balance0.toNumber(), 750000, 'deducts the amount from the sending account');
+    assert.equal(balance1.toNumber(), 250000, 'adds the amount to the receiving account');
 
   });
 
@@ -58,5 +58,48 @@ contract('TestToken', (accounts) => {
 
     let allowance = await tokenInstance.allowance(accounts[0], accounts[1]);
     assert.equal(allowance, 100, 'stores the allowance for delegated transfer');
+  });
+
+  it('handles delegated token transfers', async () => {
+    let tokenInstance = await TestToken.deployed();
+    let fromAccount = accounts[2];
+    let toAccount = accounts[3];
+    let spendingAccount = accounts[4];
+
+    // Transfer some tokens to fromAccount
+    await tokenInstance.transfer(fromAccount, 100, {from: accounts[0]});
+    // Approve spendingAccount to spend 10 tokens from fromAccount
+    await tokenInstance.approve(spendingAccount, 10, {from: fromAccount});
+    // Try transferring something than the sender's balance
+    try {
+      await tokenInstance.transferFrom(fromAccount, toAccount, 9999, {from: spendingAccount});
+      assert(false, 'cannot transfer value larger than balance');
+    } catch(err) {
+      assert(err.message.indexOf('revert') >= 0, 'cannot transfer value larger than balance');
+    }
+    // Try transferring something larger than the aproved amount
+    try {
+      await tokenInstance.transferFrom(fromAccount, toAccount, 20, {from: spendingAccount});
+      assert(false, 'cannot transfer value larger than approved amount');
+    } catch(err) {
+      assert(err.message.indexOf('revert') >= 0, 'cannot transfer value larger than approved amount');
+    }
+    let success = await tokenInstance.transferFrom.call(fromAccount, toAccount, 10, {from: spendingAccount});
+    assert.equal(success, true, 'it returns true');
+
+    let receipt = await tokenInstance.transferFrom(fromAccount, toAccount, 10, {from: spendingAccount});
+    assert.equal(receipt.logs.length, 1, 'triggers one event');
+    assert.equal(receipt.logs[0].event, 'Transfer', 'should be the "Transfer" event');
+    assert.equal(receipt.logs[0].args._from, fromAccount, 'logs the account the tokens are transferred from');
+    assert.equal(receipt.logs[0].args._to, toAccount, 'logs the account the tokens are transferred to');
+    assert.equal(receipt.logs[0].args._value, 10, 'logs the transfer amount');
+
+    let balance0 = await tokenInstance.balanceOf(fromAccount);
+    let balance1 = await tokenInstance.balanceOf(toAccount);
+    assert.equal(balance0.toNumber(), 90, 'deducts the amount from the sending account');
+    assert.equal(balance1.toNumber(), 10, 'adds the amount to the receiving account');
+
+    let allowance = await tokenInstance.allowance(fromAccount, spendingAccount);
+    assert.equal(allowance, 0, 'deducts the amount from the allowance');
   });
 })
