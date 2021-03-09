@@ -1,0 +1,28 @@
+{
+  "name": "token_test",
+  "version": "1.0.0",
+  "description": "Dapp Token Sale ICO",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miquelcabot/token_test.git"
+  },
+  "author": "Miquel A. Cabot",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/miquelcabot/token_test/issues"
+  },
+  "homepage": "https://github.com/miquelcabot/token_test#readme",
+  "dependencies": {
+    "solc": "^0.7.4"
+  },
+  "devDependencies": {
+    "truffle": "^5.2.2"
+  }
+}
